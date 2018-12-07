@@ -34,9 +34,10 @@
       var ctx = canv.getContext("2d");
 
       // game variables
+      var grid = [];
 
       // dimensions
-      var height, width;
+      var height, width, margin;
       setDimensions();
 
       // event listener
@@ -66,6 +67,33 @@
       }
 
       function createGrid() {
+        grid = [];
+
+        // set up cell size and margins
+        let cell, marginX, marginY;
+
+        // portrait
+        if((width - margin * 2) * GRID_ROWS / GRID_COLS < height - margin * 2) {
+          cell = (width - margin * 2) / GRID_COLS;
+          marginX = margin;
+          marginY = (height - cell * GRID_ROWS) / 2;
+        }
+          // landscape
+        else {
+          cell = (height - margin * 2) / GRID_ROWS;
+          marginX = (width - cell * GRID_COLS) / 2;
+          marginY = margin;
+        }
+
+        // populate the grid
+        for(let i = 0; i < GRID_ROWS; i++){
+          grid[i] = [];
+          for(let j = 0; j < GRID_COLS; j++){
+            let left = marginX + j * cell;
+            let top = marginY + i * cell;
+            grid[i][j] = new Cell(left, top, cell, cell, i, j);
+          }
+        }
 
       }
 
@@ -83,6 +111,7 @@
         width = window.innerWidth;
         canv.height = height;
         canv.width = width;
+        margin = MARGIN * Math.min(height, width);
         newGame();
       }
     </script>
