@@ -28,6 +28,31 @@
       const COLOR_BACKGROUND = "black";
       const COLOR_FRAME = "blue";
 
+      // classes
+      class Cell {
+        constructor(left, top, wi, h, row, col) {
+          this.bot = top + h;
+          this.left = left;
+          this.right = left + width;
+          this.top = top;
+          this.w = w;
+          this.h = h;
+          this.row = row;
+          this.col = col;
+          this.cx = left + w / 2;
+          this.cy = top + h / 2;
+          this.r = w * GRID_CIRCLE / 2;
+          this.owner = null;
+        }
+
+        // draw the circle or hole
+        draw (/** @type {CanvasRenderingContext2D} */ ctx) {
+
+          // owner color
+          let color =
+        }
+      }
+
       // set up the canvas and context
       var canv = document.createElement("canvas");
       document.body.appendChild(canv);
