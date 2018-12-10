@@ -25,8 +25,13 @@
       const MARGIN = 0.02 // margin as a fraction of shortest screen dimension
 
       // colors
-      const COLOR_BACKGROUND = "black";
+      const COLOR_BACKGROUND = "mintcream";
+      const COLOR_COMP = "red";
+      const COLOR_COMP_DRK = "darkred";
       const COLOR_FRAME = "blue";
+      const COLOR_FRAME_BUTT = "royalblue";
+      const COLOR_PLAY = "yellow";
+      const COLOR_PLAY_DRK = "olive";
 
       // classes
       class Cell {
@@ -49,7 +54,13 @@
         draw (/** @type {CanvasRenderingContext2D} */ ctx) {
 
           // owner color
-          let color =
+          let color = this.owner == null ? COLOR_BACKGROUND : this.owner ? COLOR_PLAY : COLOR_COMP;
+
+          // draw the circle
+          ctx.fillStyle = color;
+          ctx.beginPath();
+          ctx.arc(this.cx, this.cy, this.r, 0, Math.PI * 2);
+          ctx.fill();
         }
       }
 
@@ -86,6 +97,7 @@
 
         // draw
         drawBackground();
+        drawGrid();
 
         // call next frame
         requestAnimationFrame(loop);
@@ -125,6 +137,15 @@
       function drawBackground() {
         ctx.fillStyle = COLOR_BACKGROUND;
         ctx.fillRect(0, 0, width, height);
+      }
+
+      function drawGrid() {
+        // frame and butt
+        let cell = grid[0][0];
+        let fh = cell.h * GRID_ROWS;
+        let fw = cell.w * GRID_COLS;
+        ctx.fillStyle = COLOR_FRAME;
+        ctx.fillRect(cell.left, cell.top, fw, fh);
       }
 
       function newGame() {
