@@ -330,7 +330,7 @@
         // loop through each column
         let cell;
         for (let i = 0; i < GRID_COLS; i++) {
-            cell = highlightCell(grid[0][i.cx, grid[0][i].cy);
+            cell = highlightCell(grid[0][i].cx, grid[0][i].cy);
 
             // column full, go to next column
             if (cell == null) {
@@ -357,8 +357,33 @@
                   // last priority, don't let player win
                   if(checkWin(cell.row - 1, cell.col)) {
                     options[3].push(i);
+                  }
+
+                  // third priority, no siginificance
+                  else  {
+                    options[2].push(i);
+                  }
+
+                  // deselect cell above
+                  grid[cell.row - 1][cell.col].owner = null;
+                }
+
+                // no row above, third priority, no siginificance
+                else  {
+                  options[2].push(i);
                 }
               }
+            }
+
+            // cancel highlight and selection
+            cell.highlight = null;
+            cell.owner = null;
+        }
+
+        // clear the winning cells
+        for (let row of grid) {
+            for (let cell of row) {
+              cell.winner = false;
             }
         }
 
@@ -370,7 +395,7 @@
             col = options[1][Math.floor(Math.random() * options[1].length)]
         } else if (options[2].length > 0) {
             col = options[2][Math.floor(Math.random() * options[2].length)]
-        } else (options[3].length > 0) {
+        } else if (options[3].length > 0) {
             col = options[3][Math.floor(Math.random() * options[3].length)]
         }
 
