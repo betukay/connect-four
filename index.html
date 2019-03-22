@@ -58,6 +58,7 @@
           this.r = w * GRID_CIRCLE / 2;
           this.highlight = null;
           this.owner = null;
+          this.winner = false;
         }
 
         contains(x, y) {
@@ -77,11 +78,11 @@
           ctx.fill();
 
           //draw the highlight
-          if (this.highlight != null) {
+          if (this.winner || this.highlight != null) {
 
 
             //color
-            color = this.highlight ? COLOR_PLAY : COLOR_COMP;
+            color = this.winner ? COLOR_WIN : this.highlight ? COLOR_PLAY : COLOR_COMP;
 
             // draw a circle around the perimeter
             ctx.lineWidth = this.r / 4;
@@ -105,7 +106,7 @@
       var height, width, margin;
       setDimensions();
 
-      // event listener
+      // event listeners
       canv.addEventListener("click", click);
       canv.addEventListener("mousemove", highlightGrid);
       window.addEventListener("resize", setDimensions);
@@ -136,8 +137,36 @@
       }
 
       function checkWin(row, col) {
-        // TODO checkwin
-        return false;
+
+        // get all the cells from each direction
+        let diagL = [], diagR = [], horiz = [], vert = [];
+        for (let i = 0; i < GRID_ROWS; i++) {
+          for (let j = 0; j < GRID_COLS; j++) {
+
+            // horizontal cells
+            if (i == row) {
+              horiz.push(grid[i][j]);
+            }
+
+            // vertical cells
+            if (j == col) {
+              vert.push(grid[i][j]);
+            }
+
+            // top left to bottom right
+            if (i - j == row - col) {
+              diagL.push(grid[i][j]);
+            }
+
+            // top right to bottom left
+            if(i + j == row + col) {
+              diagR.push(grid[i][j]);
+            }
+          }
+        }
+
+        // if any have four in a row, return a win!
+        return connect4(diagL) || connect4(diagR) || connect4(horiz) || connect4(vert);
       }
 
       function connect4(cells = []) {
@@ -156,7 +185,26 @@
             count++;
             winningCells.push(cells[i]);
           }
+
+          // new owner, new count
+          else {
+            count = 1;
+            winningCells = [];
+            winningCells.push(cells[i]);
+          }
+
+          // set the lastOwner
+          lastOwner = cells[i].owner;
+
+          // four in a row is a win!
+          if (count == 4) {
+            for (let cell of winningCells) {
+              cell.winner = true;
+            }
+            return true;
+          }
         }
+        return false;
       }
 
       function click(ev) {
@@ -275,7 +323,7 @@
           return;
         }
 
-        // highlight the first unoccupied cells
+        // highlight the first unoccupied cell
         for (let i = GRID_ROWS - 1; i >= 0; i--) {
           if(grid[i][col].owner == null) {
             grid[i][col].highlight = playersTurn;
